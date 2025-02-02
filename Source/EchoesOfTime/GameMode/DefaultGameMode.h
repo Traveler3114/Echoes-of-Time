@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,16 +5,19 @@
 #include "DefaultGameMode.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class ECHOESOFTIME_API ADefaultGameMode : public AGameMode
 {
 	GENERATED_BODY()
-private:
-	APlayerController* PausingPlayer = nullptr;
 public:
 	ADefaultGameMode();
+
+	// Respawn the player to the closest PlayerStart
 	void RespawnPlayer(APlayerController* PlayerController);
-	AActor* ChoosePlayerStart_Implementation(AController* Player);
-}; 
+
+	// Choose a specific PlayerStart based on player index
+	AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+};
