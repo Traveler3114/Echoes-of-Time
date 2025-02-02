@@ -13,6 +13,8 @@ UCLASS()
 class ECHOESOFTIME_API ADefaultGameMode : public AGameMode
 {
 	GENERATED_BODY()
+private:
+	APlayerController* PausingPlayer = nullptr;
 public:
 	ADefaultGameMode();
 	void RespawnPlayer(APlayerController* PlayerController);
