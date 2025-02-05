@@ -20,10 +20,12 @@ void AGameController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	CheckPing(DeltaTime);
+	
 }
 
 void AGameController::CheckPing(float DeltaTime)
 {
+	
 	APlayerState* CurrentPlayerState = GetPlayerState<APlayerState>();
 	HighPingRunningTime += DeltaTime;
 
