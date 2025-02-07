@@ -31,11 +31,13 @@ void AGameController::CheckPing(float DeltaTime)
 
 	if (HighPingRunningTime > CheckPingFrequency)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("HighPingRunningTime > CheckPingFrequency"))
 		CurrentPlayerState = CurrentPlayerState == nullptr ? GetPlayerState<APlayerState>() : CurrentPlayerState;
 		if (CurrentPlayerState)
 		{
 			if (CurrentPlayerState->GetCompressedPing() * 4 > HighPingThreshold)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("HihgPing"))
 				HighPingWarning();
 				PingAnimationRunningTime = 0.f;
 			}
