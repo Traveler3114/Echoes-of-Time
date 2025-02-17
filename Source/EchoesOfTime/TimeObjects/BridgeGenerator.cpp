@@ -15,13 +15,8 @@ ABridgeGenerator::ABridgeGenerator()
 void ABridgeGenerator::BeginPlay()
 {
     Super::BeginPlay();
-    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    if (PlayerController)
-    {
-        SetOwner(PlayerController);
-    }
     // Automatically generate the bridge when the game starts
-    GenerateBridge();
+    if(HasAuthority()) GenerateBridge();
 }
 
 

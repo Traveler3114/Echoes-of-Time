@@ -26,11 +26,11 @@ ABridge::ABridge()
     // Ensure physics simulation is initially disabled
     Mesh->SetSimulatePhysics(false);
 
-    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    if (PlayerController)
-    {
-        SetOwner(PlayerController);
-    }
+    //APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+    //if (PlayerController)
+    //{
+    //    SetOwner(PlayerController);
+    //}
 }
 
 void ABridge::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -44,12 +44,6 @@ void ABridge::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 void ABridge::BeginPlay()
 {
     Super::BeginPlay();
-
-    //APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    //if (PlayerController)
-    //{
-    //    SetOwner(PlayerController);
-    //}
 }
 
 void ABridge::Tick(float DeltaTime)
@@ -67,18 +61,7 @@ void ABridge::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherA
         {
             Mesh->SetSimulatePhysics(true);
         }
-        else
-        {
-            ServerEnablePhysics();
-        }
     }
 }
 
-void ABridge::ServerEnablePhysics_Implementation()
-{
-    if (bCanFall)
-    {
-        Mesh->SetSimulatePhysics(true);
-    }
-}
 
