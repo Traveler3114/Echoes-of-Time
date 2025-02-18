@@ -40,7 +40,7 @@ protected:
 
 	void MapSwitch(const FInputActionValue& Value);
 
-	void OnSwitchMapReleased(const FInputActionValue& Value);
+	void MapSwitchReleased(const FInputActionValue& Value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputMappingContext* DefaultMappingContext;

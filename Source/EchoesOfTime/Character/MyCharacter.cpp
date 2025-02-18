@@ -40,7 +40,7 @@ AMyCharacter::AMyCharacter()
     // instead of recompiling to adjust them
     GetCharacterMovement()->JumpZVelocity = 500.f;
     GetCharacterMovement()->AirControl = 0.35f;
-    GetCharacterMovement()->MaxWalkSpeed = 500.f;
+    GetCharacterMovement()->MaxWalkSpeed = 250.f;
     GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
     GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
     GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
@@ -101,7 +101,7 @@ void AMyCharacter::MapSwitch(const FInputActionValue& Value)
     }
 }
 
-void AMyCharacter::OnSwitchMapReleased(const FInputActionValue& Value)
+void AMyCharacter::MapSwitchReleased(const FInputActionValue& Value)
 {
     // Allow the map to be switched again when the button is released
     bCanSwitchMap = true;
@@ -155,7 +155,7 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
         EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyCharacter::Look);
 
         EnhancedInputComponent->BindAction(SwitchMapAction, ETriggerEvent::Started, this, &AMyCharacter::MapSwitch); // On press
-        EnhancedInputComponent->BindAction(SwitchMapAction, ETriggerEvent::Completed, this, &AMyCharacter::OnSwitchMapReleased); // On release
+        EnhancedInputComponent->BindAction(SwitchMapAction, ETriggerEvent::Completed, this, &AMyCharacter::MapSwitchReleased); // On release
 
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AMyCharacter::Jump); // On press
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMyCharacter::StopJumping); // On release
