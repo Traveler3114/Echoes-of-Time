@@ -14,45 +14,45 @@ ADefaultGameMode::ADefaultGameMode()
 }
 
 
-void ADefaultGameMode::RespawnPlayer(APlayerController* PlayerController)
-{
-    if (!PlayerController) return;
-
-    // Get the player's character
-    ACharacter* PlayerCharacter = PlayerController->GetCharacter();
-    if (!PlayerCharacter) return;
-
-    // Get the player's current location
-    FVector PlayerLocation = PlayerCharacter->GetActorLocation();
-
-    // Find the closest PlayerStart
-    APlayerStart* ClosestPlayerStart = nullptr;
-    float ClosestDistance = FLT_MAX;
-
-    for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
-    {
-        APlayerStart* PlayerStart = *It;
-        if (PlayerStart)
-        {
-            float Distance = FVector::Dist(PlayerLocation, PlayerStart->GetActorLocation());
-            if (Distance < ClosestDistance)
-            {
-                ClosestDistance = Distance;
-                ClosestPlayerStart = PlayerStart;
-            }
-        }
-    }
-
-    // If a PlayerStart was found, respawn the player there
-    if (ClosestPlayerStart)
-    {
-        FVector RespawnLocation = ClosestPlayerStart->GetActorLocation();
-        FRotator RespawnRotation = ClosestPlayerStart->GetActorRotation();
-        PlayerCharacter->SetActorLocationAndRotation(RespawnLocation, RespawnRotation);
-
-        // Optionally reset health, ammo, etc.
-    }
-}
+//void ADefaultGameMode::RespawnPlayer(APlayerController* PlayerController)
+//{
+//    if (!PlayerController) return;
+//
+//    // Get the player's character
+//    ACharacter* PlayerCharacter = PlayerController->GetCharacter();
+//    if (!PlayerCharacter) return;
+//
+//    // Get the player's current location
+//    FVector PlayerLocation = PlayerCharacter->GetActorLocation();
+//
+//    // Find the closest PlayerStart
+//    APlayerStart* ClosestPlayerStart = nullptr;
+//    float ClosestDistance = FLT_MAX;
+//
+//    for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
+//    {
+//        APlayerStart* PlayerStart = *It;
+//        if (PlayerStart)
+//        {
+//            float Distance = FVector::Dist(PlayerLocation, PlayerStart->GetActorLocation());
+//            if (Distance < ClosestDistance)
+//            {
+//                ClosestDistance = Distance;
+//                ClosestPlayerStart = PlayerStart;
+//            }
+//        }
+//    }
+//
+//    // If a PlayerStart was found, respawn the player there
+//    if (ClosestPlayerStart)
+//    {
+//        FVector RespawnLocation = ClosestPlayerStart->GetActorLocation();
+//        FRotator RespawnRotation = ClosestPlayerStart->GetActorRotation();
+//        PlayerCharacter->SetActorLocationAndRotation(RespawnLocation, RespawnRotation);
+//
+//        // Optionally reset health, ammo, etc.
+//    }
+//}
 
 
 //NE DIRAJ OVAJ KOD NIKAD!!!!!!!!!!!!!!!!!!!

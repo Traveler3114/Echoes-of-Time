@@ -59,17 +59,17 @@ AMyCharacter::AMyCharacter()
 
 
 
-void AMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor) {
-    Super::NotifyActorBeginOverlap(OtherActor);
-    if (OtherActor->ActorHasTag("OutOfBounds")) {
-        ADefaultGameMode* GameMode = Cast<ADefaultGameMode>(GetWorld()->GetAuthGameMode());
-        APlayerController* PlayerController = Cast<APlayerController>(GetController());
-        if (GameMode)
-        {
-            GameMode->RespawnPlayer(PlayerController);  // Pass the PlayerController to the GameMode
-        }
-    }
-}
+//void AMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor) {
+//    Super::NotifyActorBeginOverlap(OtherActor);
+//    if (OtherActor->ActorHasTag("OutOfBounds")) {
+//        ADefaultGameMode* GameMode = Cast<ADefaultGameMode>(GetWorld()->GetAuthGameMode());
+//        APlayerController* PlayerController = Cast<APlayerController>(GetController());
+//        if (GameMode)
+//        {
+//            GameMode->RespawnPlayer(PlayerController);  // Pass the PlayerController to the GameMode
+//        }
+//    }
+//}
 
 
 
