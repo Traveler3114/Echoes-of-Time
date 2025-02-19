@@ -9,6 +9,7 @@
 
 void AGameController::BeginPlay()
 {
+	Super::BeginPlay();
 	CharacterHUD = CharacterHUD == nullptr ? Cast<ACharacterHUD>(GetHUD()) : CharacterHUD;
 	if (CharacterHUD)
 	{
