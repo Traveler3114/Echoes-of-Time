@@ -40,7 +40,7 @@ AMyCharacter::AMyCharacter()
     // instead of recompiling to adjust them
     GetCharacterMovement()->JumpZVelocity = 500.f;
     GetCharacterMovement()->AirControl = 0.35f;
-    GetCharacterMovement()->MaxWalkSpeed = 250.f;
+    GetCharacterMovement()->MaxWalkSpeed = 300.f;
     GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
     GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
     GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
@@ -159,6 +159,9 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AMyCharacter::Jump); // On press
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMyCharacter::StopJumping); // On release
+
+        EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMyCharacter::StartSprint);
+        EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMyCharacter::StopSprint);
     }
 }
 
@@ -167,28 +170,52 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 
 
+//void AMyCharacter::Move(const FInputActionValue& Value)
+//{
+//    // input is a Vector2D
+//    FVector2D MovementVector = Value.Get<FVector2D>();
+//
+//    if (Controller != nullptr)
+//    {
+//        // find out which way is forward
+//        const FRotator Rotation = Controller->GetControlRotation();
+//        const FRotator YawRotation(0, Rotation.Yaw, 0);
+//
+//        // get forward vector
+//        const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+//
+//        // get right vector 
+//        const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+//
+//        // add movement 
+//        AddMovementInput(ForwardDirection, MovementVector.Y);
+//        AddMovementInput(RightDirection, MovementVector.X);
+//    }
+//}
+
 void AMyCharacter::Move(const FInputActionValue& Value)
 {
-    // input is a Vector2D
     FVector2D MovementVector = Value.Get<FVector2D>();
 
     if (Controller != nullptr)
     {
-        // find out which way is forward
         const FRotator Rotation = Controller->GetControlRotation();
         const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-        // get forward vector
         const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-        // get right vector 
         const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-        // add movement 
         AddMovementInput(ForwardDirection, MovementVector.Y);
         AddMovementInput(RightDirection, MovementVector.X);
+
+        // Stop sprinting if moving sideways or backward
+        if (MovementVector.Y <= 0 || MovementVector.X != 0)
+        {
+            StopSprint();
+        }
     }
 }
+
 
 
 void AMyCharacter::Look(const FInputActionValue& Value)
@@ -203,6 +230,18 @@ void AMyCharacter::Look(const FInputActionValue& Value)
         AddControllerPitchInput(LookAxisVector.Y);
     }
 }
+
+
+void AMyCharacter::StartSprint()
+{
+    GetCharacterMovement()->MaxWalkSpeed = 600.f; // Sprint speed
+}
+
+void AMyCharacter::StopSprint()
+{
+    GetCharacterMovement()->MaxWalkSpeed = 300.f; // Normal speed
+}
+
 
 
 

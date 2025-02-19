@@ -38,6 +38,9 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 
+	void StartSprint();
+	void StopSprint();
+
 	void MapSwitch(const FInputActionValue& Value);
 
 	void MapSwitchReleased(const FInputActionValue& Value);
@@ -50,6 +53,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputAction* LookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputAction* SprintAction;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputAction* JumpAction;
