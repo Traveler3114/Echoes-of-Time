@@ -119,15 +119,8 @@ void AMyCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void AMyCharacter::StartSprint()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 600.f;
-}
 
-void AMyCharacter::StopSprint()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 300.f;
-}
+
 
 void AMyCharacter::ServerMapSwitch_Implementation()
 {
@@ -159,4 +152,16 @@ void AMyCharacter::MapSwitch(const FInputActionValue& Value)
 void AMyCharacter::MapSwitchReleased(const FInputActionValue& Value)
 {
 	bCanSwitchMap = true;
+}
+
+
+
+void AMyCharacter::StartSprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+}
+
+void AMyCharacter::StopSprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 }
