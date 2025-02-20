@@ -22,11 +22,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+
 	// Movement and looking functions
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-	void StartSprint();
-	void StopSprint();
+
+
 
 	// Map switching mechanics
 	void MapSwitch(const FInputActionValue& Value);
@@ -67,7 +68,9 @@ protected:
 	void ServerMapSwitch();
 
 
+
 public:
 	virtual void Tick(float DeltaTime) override;
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 };

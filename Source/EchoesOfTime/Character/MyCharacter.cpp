@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "InputActionValue.h"
+#include "Net/UnrealNetwork.h"
 
 AMyCharacter::AMyCharacter()
 {
@@ -63,10 +64,14 @@ void AMyCharacter::BeginPlay()
 	}
 }
 
+
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+
+
 
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -80,10 +85,11 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(SwitchMapAction, ETriggerEvent::Completed, this, &AMyCharacter::MapSwitchReleased);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AMyCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMyCharacter::StopJumping);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMyCharacter::StartSprint);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMyCharacter::StopSprint);
+		//EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMyCharacter::ServerStartSprint);
+		//EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMyCharacter::ServerStopSprint);
 	}
 }
+
 
 void AMyCharacter::Move(const FInputActionValue& Value)
 {
@@ -103,10 +109,12 @@ void AMyCharacter::Move(const FInputActionValue& Value)
 		// Stop sprinting if moving sideways or backward
 		if (MovementVector.Y <= 0 || MovementVector.X != 0)
 		{
-			StopSprint();
+			//StopSprint();
 		}
 	}
 }
+
+
 
 void AMyCharacter::Look(const FInputActionValue& Value)
 {
@@ -155,13 +163,3 @@ void AMyCharacter::MapSwitchReleased(const FInputActionValue& Value)
 }
 
 
-
-void AMyCharacter::StartSprint()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 600.f;
-}
-
-void AMyCharacter::StopSprint()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 300.f;
-}
