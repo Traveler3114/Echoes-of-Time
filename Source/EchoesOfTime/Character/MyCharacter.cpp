@@ -71,6 +71,10 @@ void AMyCharacter::Tick(float DeltaTime)
 }
 
 
+void AMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+}
+
 
 
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -85,8 +89,8 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(SwitchMapAction, ETriggerEvent::Completed, this, &AMyCharacter::MapSwitchReleased);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AMyCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMyCharacter::StopJumping);
-		//EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMyCharacter::ServerStartSprint);
-		//EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMyCharacter::ServerStopSprint);
+		//EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMyCharacter::StartSprint);
+		//EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMyCharacter::StopSprint);
 	}
 }
 
@@ -138,7 +142,9 @@ void AMyCharacter::ServerMapSwitch_Implementation()
 	}
 }
 
-void AMyCharacter::MapSwitch(const FInputActionValue& Value)
+
+
+void AMyCharacter::MapSwitch()
 {
 	if (bCanSwitchMap)
 	{
@@ -157,7 +163,7 @@ void AMyCharacter::MapSwitch(const FInputActionValue& Value)
 	}
 }
 
-void AMyCharacter::MapSwitchReleased(const FInputActionValue& Value)
+void AMyCharacter::MapSwitchReleased()
 {
 	bCanSwitchMap = true;
 }
