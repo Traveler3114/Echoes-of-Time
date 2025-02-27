@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "Net/UnrealNetwork.h"
 #include "MyCharacter.generated.h"
 
 class UCameraComponent;
@@ -28,13 +27,11 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 
-	
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 	// Map switching mechanics
-	void MapSwitch();
-	void MapSwitchReleased();
+	void MapSwitch(const FInputActionValue& Value);
+	void MapSwitchReleased(const FInputActionValue& Value);
 
 	// Input actions
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")

@@ -1,10 +1,12 @@
+#pragma once
+
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "SettingsWidget.generated.h"
 
 class UComboBoxString;
 class UCheckBox;
-class UEditableTextBox;
+class USlider;
 class UButton;
 
 UCLASS()
@@ -39,7 +41,7 @@ private:
     UCheckBox* VSyncCheckBox;
 
     UPROPERTY(meta = (BindWidget))
-    UEditableTextBox* FPSLimitTextBox;
+    USlider* FPSLimitSlider;
 
     UPROPERTY(meta = (BindWidget))
     UButton* ApplyButton;
@@ -55,7 +57,7 @@ private:
     void OnCancelSettings();
 
     UFUNCTION()
-    void OnFPSLimitTextChanged(const FText& Text);
+    void OnFPSLimitChanged(float Value);
 
     void LoadCurrentSettings();
 };

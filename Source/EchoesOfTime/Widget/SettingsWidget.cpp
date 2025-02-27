@@ -1,7 +1,7 @@
 #include "SettingsWidget.h"
 #include "Components/ComboBoxString.h"
 #include "Components/CheckBox.h"
-#include "Components/EditableTextBox.h"
+#include "Components/Slider.h"
 #include "Components/Button.h"
 #include "GameFramework/GameUserSettings.h"
 
@@ -19,10 +19,10 @@ void USettingsWidget::NativeConstruct()
         CancelButton->OnClicked.AddDynamic(this, &USettingsWidget::OnCancelSettings);
     }
 
-    // Bind FPS Text Box
-    if (FPSLimitTextBox)
+    // Bind FPS Slider
+    if (FPSLimitSlider)
     {
-        FPSLimitTextBox->OnTextChanged.AddDynamic(this, &USettingsWidget::OnFPSLimitTextChanged);
+        FPSLimitSlider->OnValueChanged.AddDynamic(this, &USettingsWidget::OnFPSLimitChanged);
     }
 
     // Populate Fullscreen Dropdown
@@ -46,6 +46,11 @@ void USettingsWidget::NativeConstruct()
     // Populate Quality Settings
     if (TextureQualityDropdown && ShadowQualityDropdown && ShaderQualityDropdown && AntiAliasingDropdown)
     {
+        TextureQualityDropdown->ClearOptions();
+        ShadowQualityDropdown->ClearOptions();
+        ShaderQualityDropdown->ClearOptions();
+        AntiAliasingDropdown->ClearOptions();
+
         for (FString Option : { "Low", "Medium", "High", "Epic" })
         {
             TextureQualityDropdown->AddOption(Option);
@@ -63,6 +68,7 @@ void USettingsWidget::LoadCurrentSettings()
     UGameUserSettings* UserSettings = UGameUserSettings::GetGameUserSettings();
     if (!UserSettings) return;
 
+    // Load Fullscreen Mode
     if (FullscreenModeDropdown)
     {
         EWindowMode::Type FullscreenMode = UserSettings->GetFullscreenMode();
@@ -80,6 +86,7 @@ void USettingsWidget::LoadCurrentSettings()
         }
     }
 
+    // Load Resolution
     if (ResolutionDropdown)
     {
         FIntPoint Resolution = UserSettings->GetScreenResolution();
@@ -87,14 +94,34 @@ void USettingsWidget::LoadCurrentSettings()
         ResolutionDropdown->SetSelectedOption(ResolutionString);
     }
 
+    // Load Quality Settings
+    if (TextureQualityDropdown)
+    {
+        TextureQualityDropdown->SetSelectedIndex(UserSettings->GetTextureQuality());
+    }
+    if (ShadowQualityDropdown)
+    {
+        ShadowQualityDropdown->SetSelectedIndex(UserSettings->GetShadowQuality());
+    }
+    if (ShaderQualityDropdown)
+    {
+        ShaderQualityDropdown->SetSelectedIndex(UserSettings->GetPostProcessingQuality());
+    }
+    if (AntiAliasingDropdown)
+    {
+        AntiAliasingDropdown->SetSelectedIndex(UserSettings->GetAntiAliasingQuality());
+    }
+
+    // Load VSync
     if (VSyncCheckBox)
     {
         VSyncCheckBox->SetIsChecked(UserSettings->IsVSyncEnabled());
     }
 
-    if (FPSLimitTextBox)
+    // Load FPS Limit
+    if (FPSLimitSlider)
     {
-        FPSLimitTextBox->SetText(FText::AsNumber(UserSettings->GetFrameRateLimit()));
+        FPSLimitSlider->SetValue(UserSettings->GetFrameRateLimit());
     }
 }
 
@@ -103,6 +130,7 @@ void USettingsWidget::OnApplySettings()
     UGameUserSettings* UserSettings = UGameUserSettings::GetGameUserSettings();
     if (!UserSettings) return;
 
+    // Apply Fullscreen Mode
     if (FullscreenModeDropdown)
     {
         FString SelectedOption = FullscreenModeDropdown->GetSelectedOption();
@@ -120,12 +148,59 @@ void USettingsWidget::OnApplySettings()
         }
     }
 
-    if (FPSLimitTextBox)
+    // Apply Resolution
+    if (ResolutionDropdown)
     {
-        float FPSLimit = FCString::Atof(*FPSLimitTextBox->GetText().ToString());
-        UserSettings->SetFrameRateLimit(FPSLimit);
+        FString SelectedResolution = ResolutionDropdown->GetSelectedOption();
+        FIntPoint NewResolution;
+
+        if (SelectedResolution == "1280x720")
+        {
+            NewResolution = FIntPoint(1280, 720);
+        }
+        else if (SelectedResolution == "1920x1080")
+        {
+            NewResolution = FIntPoint(1920, 1080);
+        }
+        else if (SelectedResolution == "2560x1440")
+        {
+            NewResolution = FIntPoint(2560, 1440);
+        }
+
+        UserSettings->SetScreenResolution(NewResolution);
     }
 
+    // Apply Quality Settings
+    if (TextureQualityDropdown)
+    {
+        UserSettings->SetTextureQuality(TextureQualityDropdown->GetSelectedIndex());
+    }
+    if (ShadowQualityDropdown)
+    {
+        UserSettings->SetShadowQuality(ShadowQualityDropdown->GetSelectedIndex());
+    }
+    if (ShaderQualityDropdown)
+    {
+        UserSettings->SetPostProcessingQuality(ShaderQualityDropdown->GetSelectedIndex());
+    }
+    if (AntiAliasingDropdown)
+    {
+        UserSettings->SetAntiAliasingQuality(AntiAliasingDropdown->GetSelectedIndex());
+    }
+
+    // Apply V-Sync
+    if (VSyncCheckBox)
+    {
+        UserSettings->SetVSyncEnabled(VSyncCheckBox->IsChecked());
+    }
+
+    // Apply FPS Limit
+    if (FPSLimitSlider)
+    {
+        UserSettings->SetFrameRateLimit(FPSLimitSlider->GetValue());
+    }
+
+    // Apply and Save Settings
     UserSettings->ApplySettings(true);
     UserSettings->SaveSettings();
 }
@@ -135,19 +210,7 @@ void USettingsWidget::OnCancelSettings()
     LoadCurrentSettings();
 }
 
-void USettingsWidget::OnFPSLimitTextChanged(const FText& Text)
+void USettingsWidget::OnFPSLimitChanged(float Value)
 {
-    FString EnteredText = Text.ToString();
-    float EnteredValue = FCString::Atof(*EnteredText);
-
-    if (EnteredValue < 1.0f)  // Prevent invalid values
-    {
-        EnteredValue = 1.0f;
-    }
-
-    UGameUserSettings* UserSettings = UGameUserSettings::GetGameUserSettings();
-    if (UserSettings)
-    {
-        UserSettings->SetFrameRateLimit(EnteredValue);
-    }
+    // Optional: Implement logic to update a text label to display FPS value.
 }
