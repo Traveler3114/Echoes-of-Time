@@ -59,8 +59,8 @@ protected:
 	UInputAction* SwitchMapAction;
 
 	// Camera
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	UCameraComponent* FirstPersonCamera;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	//UCameraComponent* FirstPersonCamera;
 
 	// TimeManager reference
 	UPROPERTY(VisibleAnywhere)
