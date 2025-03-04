@@ -59,9 +59,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* SwitchMapAction;
 
-	// Camera
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	//UCameraComponent* FirstPersonCamera;
 
 	// TimeManager reference
 	UPROPERTY(VisibleAnywhere)

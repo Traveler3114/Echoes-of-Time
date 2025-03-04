@@ -32,11 +32,6 @@ AMyCharacter::AMyCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-	// Create first-person camera
-	//FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	//FirstPersonCamera->SetupAttachment(GetMesh(), FName("head")); // Attach to head bone (adjust as needed)
-	//FirstPersonCamera->bUsePawnControlRotation = true;
-
 	// Create and replicate TimeManager
 	TimeManager = CreateDefaultSubobject<UTimeManager>(TEXT("TimeManager"));
 	TimeManager->SetIsReplicated(true);
