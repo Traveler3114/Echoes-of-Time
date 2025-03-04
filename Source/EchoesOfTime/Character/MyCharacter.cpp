@@ -40,6 +40,9 @@ AMyCharacter::AMyCharacter()
 	// Create and replicate TimeManager
 	TimeManager = CreateDefaultSubobject<UTimeManager>(TEXT("TimeManager"));
 	TimeManager->SetIsReplicated(true);
+
+	// Initialize sprint state
+	bIsSprinting = false;
 }
 
 void AMyCharacter::PostInitializeComponents()
@@ -64,14 +67,10 @@ void AMyCharacter::BeginPlay()
 	}
 }
 
-
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-
-
 
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -87,8 +86,8 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMyCharacter::StopJumping);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AMyCharacter::StartCrouch);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AMyCharacter::StopCrouching);
-		//EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMyCharacter::ServerStartSprint);
-		//EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMyCharacter::ServerStopSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMyCharacter::ServerStartSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMyCharacter::ServerStopSprint);
 	}
 }
 
@@ -97,13 +96,10 @@ void AMyCharacter::StartCrouch()
 	Crouch();
 }
 
-
 void AMyCharacter::StopCrouching()
 {
 	UnCrouch();
 }
-
-
 
 void AMyCharacter::Move(const FInputActionValue& Value)
 {
@@ -123,12 +119,10 @@ void AMyCharacter::Move(const FInputActionValue& Value)
 		// Stop sprinting if moving sideways or backward
 		if (MovementVector.Y <= 0 || MovementVector.X != 0)
 		{
-			//StopSprint();
+			ServerStopSprint();
 		}
 	}
 }
-
-
 
 void AMyCharacter::Look(const FInputActionValue& Value)
 {
@@ -140,9 +134,6 @@ void AMyCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
-
-
-
 
 void AMyCharacter::ServerMapSwitch_Implementation()
 {
@@ -176,4 +167,46 @@ void AMyCharacter::MapSwitchReleased(const FInputActionValue& Value)
 	bCanSwitchMap = true;
 }
 
+void AMyCharacter::StartSprint()
+{
+	if (!GetCharacterMovement()->IsCrouching() && GetCharacterMovement()->Velocity.Size() > 0)
+	{
+		bIsSprinting = true;
+		OnRep_SprintState();
+	}
+}
 
+void AMyCharacter::StopSprint()
+{
+	bIsSprinting = false;
+	OnRep_SprintState();
+}
+
+void AMyCharacter::ServerStartSprint_Implementation()
+{
+	StartSprint();
+}
+
+void AMyCharacter::ServerStopSprint_Implementation()
+{
+	StopSprint();
+}
+
+void AMyCharacter::OnRep_SprintState()
+{
+	if (bIsSprinting)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	}
+}
+
+void AMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMyCharacter, bIsSprinting);
+}

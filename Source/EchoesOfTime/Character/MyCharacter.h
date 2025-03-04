@@ -22,7 +22,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-
 	// Movement and looking functions
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -30,7 +29,9 @@ protected:
 	void StartCrouch();
 	void StopCrouching();
 
-
+	// Sprint functions
+	void StartSprint();
+	void StopSprint();
 
 	// Map switching mechanics
 	void MapSwitch(const FInputActionValue& Value);
@@ -73,10 +74,24 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerMapSwitch();
 
+	// Server-side sprinting
+	UFUNCTION(Server, Reliable)
+	void ServerStartSprint();
+	UFUNCTION(Server, Reliable)
+	void ServerStopSprint();
 
+
+	// Replicated sprint state
+	UPROPERTY(ReplicatedUsing = OnRep_SprintState)
+	bool bIsSprinting;
+
+	UFUNCTION()
+	void OnRep_SprintState();
 
 public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
