@@ -8,6 +8,7 @@ class UComboBoxString;
 class UCheckBox;
 class USlider;
 class UButton;
+class UEditableTextBox;
 
 UCLASS()
 class ECHOESOFTIME_API USettingsWidget : public UUserWidget
@@ -41,7 +42,7 @@ private:
     UCheckBox* VSyncCheckBox;
 
     UPROPERTY(meta = (BindWidget))
-    USlider* FPSLimitSlider;
+    UEditableTextBox* FPSLimitTextBox;
 
     UPROPERTY(meta = (BindWidget))
     UButton* ApplyButton;
@@ -57,7 +58,7 @@ private:
     void OnCancelSettings();
 
     UFUNCTION()
-    void OnFPSLimitChanged(float Value);
+    void OnFPSLimitTextChanged(const FText& Text);
 
     void LoadCurrentSettings();
 };

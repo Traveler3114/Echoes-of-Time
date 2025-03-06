@@ -3,6 +3,7 @@
 #include "Components/CheckBox.h"
 #include "Components/Slider.h"
 #include "Components/Button.h"
+#include "Components/EditableTextBox.h"
 #include "GameFramework/GameUserSettings.h"
 
 void USettingsWidget::NativeConstruct()
@@ -19,11 +20,12 @@ void USettingsWidget::NativeConstruct()
         CancelButton->OnClicked.AddDynamic(this, &USettingsWidget::OnCancelSettings);
     }
 
-    // Bind FPS Slider
-    if (FPSLimitSlider)
+    // Bind FPS TextBox
+    if (FPSLimitTextBox)
     {
-        FPSLimitSlider->OnValueChanged.AddDynamic(this, &USettingsWidget::OnFPSLimitChanged);
+        FPSLimitTextBox->OnTextChanged.AddDynamic(this, &USettingsWidget::OnFPSLimitTextChanged);
     }
+
 
     // Populate Fullscreen Dropdown
     if (FullscreenModeDropdown)
@@ -119,9 +121,9 @@ void USettingsWidget::LoadCurrentSettings()
     }
 
     // Load FPS Limit
-    if (FPSLimitSlider)
+    if (FPSLimitTextBox)
     {
-        FPSLimitSlider->SetValue(UserSettings->GetFrameRateLimit());
+        FPSLimitTextBox->SetText(FText::AsNumber(UserSettings->GetFrameRateLimit()));
     }
 }
 
@@ -195,9 +197,11 @@ void USettingsWidget::OnApplySettings()
     }
 
     // Apply FPS Limit
-    if (FPSLimitSlider)
+    if (FPSLimitTextBox)
     {
-        UserSettings->SetFrameRateLimit(FPSLimitSlider->GetValue());
+        FString FPSString = FPSLimitTextBox->GetText().ToString();
+        float FPSValue = FCString::Atof(*FPSString);
+        UserSettings->SetFrameRateLimit(FPSValue);
     }
 
     // Apply and Save Settings
@@ -210,7 +214,14 @@ void USettingsWidget::OnCancelSettings()
     LoadCurrentSettings();
 }
 
-void USettingsWidget::OnFPSLimitChanged(float Value)
+void USettingsWidget::OnFPSLimitTextChanged(const FText& Text)
 {
-    // Optional: Implement logic to update a text label to display FPS value.
+    FString FPSString = Text.ToString();
+    if (!FPSString.IsNumeric()) return;  // Prevent invalid input
+
+    float FPSValue = FCString::Atof(*FPSString);
+    if (FPSValue < 1.0f) FPSValue = 1.0f;  // Set minimum FPS to 1
+
+    // Optional: You can add a max cap if needed, e.g., 240 FPS.
 }
+
