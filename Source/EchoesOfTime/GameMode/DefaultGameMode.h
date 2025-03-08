@@ -21,7 +21,5 @@ public:
 	AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
 
-	UFUNCTION(BlueprintCallable)
-	void SaveGame();
 
 };

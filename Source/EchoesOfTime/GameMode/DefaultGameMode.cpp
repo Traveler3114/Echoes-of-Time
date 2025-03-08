@@ -5,7 +5,6 @@
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
-#include "EchoesOfTime/MySaveGame.h"
 #include "EngineUtils.h"
 
 
@@ -14,31 +13,6 @@ ADefaultGameMode::ADefaultGameMode()
     bUseSeamlessTravel = true;
 }
 
-void ADefaultGameMode::SaveGame()
-{
-    // Create or load the SaveGame object
-    UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
-
-    if (SaveGameInstance)
-    {
-        // Set variables (example: saving player location)
-        ACharacter* Player1 = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-        ACharacter* Player2 = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(this, 1));
-        if (Player1&&Player2)
-        {
-            SaveGameInstance->Player1Location = Player1->GetActorLocation();
-            SaveGameInstance->Player2Location = Player2->GetActorLocation();
-
-            FString CurrentLevel = GetWorld()->GetPackage()->GetName();
-            CurrentLevel.RemoveFromStart(GetWorld()->StreamingLevelsPrefix); // Remove "UEDPIE_" in editor mode
-
-            SaveGameInstance->SavedLevel = CurrentLevel;
-        }
-
-        // Save to slot
-        UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("SaveSlot0"), 0);
-    }
-}
 
 
 
