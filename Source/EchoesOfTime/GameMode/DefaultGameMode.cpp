@@ -90,6 +90,7 @@ AActor* ADefaultGameMode::ChoosePlayerStart_Implementation(AController* Player)
         {
             UE_LOG(LogTemp, Warning, TEXT("Spawning Player %d at %s"), PlayerIndex, *DesiredTag);
             return PlayerStart;
+            
         }
     }
 
