@@ -5,6 +5,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
+#include "EchoesOfTime/MyGameInstance.h"
 #include "EngineUtils.h"
 
 
@@ -97,6 +98,47 @@ AActor* ADefaultGameMode::ChoosePlayerStart_Implementation(AController* Player)
     // Fallback to default PlayerStart if no match is found
     UE_LOG(LogTemp, Warning, TEXT("No matching PlayerStart found for Player %d"), PlayerIndex);
     return Super::ChoosePlayerStart_Implementation(Player);
+}
+
+AActor* ADefaultGameMode::WhichPlayerStart(AController* Player)
+{
+    if (!Player || !Player->PlayerState)
+    {
+        return ChoosePlayerStart_Implementation(Player);
+    }
+
+    // Get the player's index in the PlayerArray
+    AGameStateBase* LocalGameState = GetGameState<AGameStateBase>();
+    if (!LocalGameState)
+    {
+        return ChoosePlayerStart_Implementation(Player);
+    }
+
+    int32 PlayerIndex = LocalGameState->PlayerArray.IndexOfByKey(Player->PlayerState);
+    UE_LOG(LogTemp, Warning, TEXT("Player Index: %d"), PlayerIndex);
+
+    // Determine desired PlayerStart tag
+    FString DesiredTag = (PlayerIndex == 0) ? TEXT("PlayerStart1") : TEXT("PlayerStart2");
+
+    // Get all PlayerStart actors
+    TArray<AActor*> PlayerStarts;
+    UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), PlayerStarts);
+
+    // Find the PlayerStart with the correct tag
+    for (AActor* Start : PlayerStarts)
+    {
+        APlayerStart* PlayerStart = Cast<APlayerStart>(Start);
+        if (PlayerStart && PlayerStart->PlayerStartTag == FName(DesiredTag))
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Spawning Player %d at %s"), PlayerIndex, *DesiredTag);
+            return PlayerStart;
+
+        }
+    }
+
+    // Fallback to default PlayerStart if no match is found
+    UE_LOG(LogTemp, Warning, TEXT("No matching PlayerStart found for Player %d"), PlayerIndex);
+    return ChoosePlayerStart_Implementation(Player);
 }
 
 
