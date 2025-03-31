@@ -18,7 +18,7 @@ public:
 	void RespawnPlayer(APlayerController* PlayerController);
 
 	// Choose a specific PlayerStart based on player index
-	AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+	//AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
 	UFUNCTION(BlueprintCallable)
 	AActor* WhichPlayerStart(AController* Player);
