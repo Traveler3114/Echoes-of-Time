@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "InputActionValue.h"
 #include "Net/UnrealNetwork.h"
 
@@ -16,6 +17,7 @@ AMyCharacter::AMyCharacter()
 
 	// Set default character collision size
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
 
 	GetMesh()->SetOwnerNoSee(false); // Make sure the mesh is visible in first-person
 
@@ -60,12 +62,37 @@ void AMyCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	CameraComponent = FindComponentByClass<UCameraComponent>();
+	if (!CameraComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CameraComponent not found!"));
+	}
 }
 
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Get the Camera's location and rotation
+	if (PhysicsHandle->GrabbedComponent) {
+		FVector CameraLocation = CameraComponent->GetComponentLocation();
+		FRotator CameraRotation = CameraComponent->GetComponentRotation();
+
+		// Get the forward vector
+		FVector ForwardVector = CameraRotation.Vector();
+
+		// Calculate the target location
+		FVector TargetLocation = CameraLocation + (ForwardVector * ActorDistance); // Adjust distance (500.0f)
+
+		// Update the Physics Handle's target location
+		if (PhysicsHandle)
+		{
+			PhysicsHandle->SetTargetLocation(TargetLocation);
+		}
+	}
 }
+
+
 
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -83,8 +110,60 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AMyCharacter::StopCrouching);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMyCharacter::ServerStartSprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMyCharacter::ServerStopSprint);
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &AMyCharacter::Pickup);
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Completed, this, &AMyCharacter::Drop);
 	}
 }
+
+
+void AMyCharacter::Pickup()
+{
+	// Get the camera's world location and rotation
+	FVector CameraLocation = CameraComponent->GetComponentLocation();
+	FRotator CameraRotation = CameraComponent->GetComponentRotation();
+
+	// Calculate the end location for the line trace
+	FVector ForwardVector = CameraRotation.Vector();
+	FVector TraceEnd = CameraLocation + (ForwardVector * ActorDistance); // Adjust distance as needed
+
+	// Perform the line trace
+	FHitResult HitResult;
+	FCollisionQueryParams TraceParams(FName(TEXT("")), true, this);
+	TraceParams.bTraceComplex = false;
+	TraceParams.bReturnPhysicalMaterial = false;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		CameraLocation,
+		TraceEnd,
+		ECC_Visibility,
+		TraceParams
+	);
+
+	// If the trace is successful, grab the hit component using a physics handle
+	if (bHit && HitResult.GetComponent())
+	{
+		UPrimitiveComponent* HitComponent = HitResult.GetComponent();
+		PhysicsHandle->GrabComponentAtLocation(
+			HitComponent,
+			NAME_None,
+			HitResult.Location
+		);
+	}
+}
+
+
+
+
+void AMyCharacter::Drop()
+{
+	if (PhysicsHandle)
+	{
+		// Release the actor from the physics handle
+		PhysicsHandle->ReleaseComponent();
+	}
+}
+
 
 void AMyCharacter::StartCrouch()
 {

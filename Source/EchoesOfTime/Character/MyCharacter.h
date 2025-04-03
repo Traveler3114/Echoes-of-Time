@@ -59,10 +59,24 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* SwitchMapAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* PickupAction;
 
-	// TimeManager reference
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	class UPhysicsHandleComponent* PhysicsHandle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	UCameraComponent* CameraComponent;
+
 	UPROPERTY(VisibleAnywhere)
 	class UTimeManager* TimeManager;
+
+	void Pickup();
+	void Drop();
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float ActorDistance=150.f;
+
 
 	// Map switching state
 	bool bCanSwitchMap = true;
@@ -84,6 +98,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_SprintState();
+
+
+
 
 public:
 	virtual void Tick(float DeltaTime) override;
