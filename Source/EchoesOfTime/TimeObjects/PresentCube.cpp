@@ -33,8 +33,6 @@ void APresentCube::BeginPlay()
 {
 	Super::BeginPlay();
     Widget->SetVisibility(false);
-    BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &APresentCube::OnOverlapBegin);
-    BoxCollision->OnComponentEndOverlap.AddDynamic(this, &APresentCube::OnOverlapEnd);
 }
 
 // Called every frame
@@ -43,18 +41,3 @@ void APresentCube::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void APresentCube::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    AMyCharacter* Character = Cast<AMyCharacter>(OtherActor);
-    if (Character) {
-        Widget->SetVisibility(true);
-    }
-}
-
-void APresentCube::OnOverlapEnd(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
-{
-    AMyCharacter* Character = Cast<AMyCharacter>(OtherActor);
-    if (Character) {
-        Widget->SetVisibility(false);
-    }
-}

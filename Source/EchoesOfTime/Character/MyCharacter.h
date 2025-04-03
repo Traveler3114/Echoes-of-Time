@@ -71,12 +71,11 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UTimeManager* TimeManager;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	AActor* HitActor;
+
 	void Pickup();
 	void Drop();
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float ActorDistance=150.f;
-
 
 	// Map switching state
 	bool bCanSwitchMap = true;

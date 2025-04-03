@@ -69,28 +69,7 @@ void AMyCharacter::BeginPlay()
 	}
 }
 
-void AMyCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 
-	// Get the Camera's location and rotation
-	if (PhysicsHandle->GrabbedComponent) {
-		FVector CameraLocation = CameraComponent->GetComponentLocation();
-		FRotator CameraRotation = CameraComponent->GetComponentRotation();
-
-		// Get the forward vector
-		FVector ForwardVector = CameraRotation.Vector();
-
-		// Calculate the target location
-		FVector TargetLocation = CameraLocation + (ForwardVector * ActorDistance); // Adjust distance (500.0f)
-
-		// Update the Physics Handle's target location
-		if (PhysicsHandle)
-		{
-			PhysicsHandle->SetTargetLocation(TargetLocation);
-		}
-	}
-}
 
 
 
@@ -116,40 +95,36 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 }
 
 
+void AMyCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (PhysicsHandle->GrabbedComponent) {
+		FVector CameraLocation = CameraComponent->GetComponentLocation();
+		FRotator CameraRotation = CameraComponent->GetComponentRotation();
+
+		// Get the forward vector
+		FVector ForwardVector = CameraRotation.Vector();
+
+		// Calculate the target location
+		FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
+
+		// Update the Physics Handle's target location
+		if (PhysicsHandle)
+		{
+			PhysicsHandle->SetTargetLocation(TargetLocation);
+		}
+	}
+}
+
 void AMyCharacter::Pickup()
 {
-	// Get the camera's world location and rotation
-	FVector CameraLocation = CameraComponent->GetComponentLocation();
-	FRotator CameraRotation = CameraComponent->GetComponentRotation();
+	UPrimitiveComponent* HitComponent = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
 
-	// Calculate the end location for the line trace
-	FVector ForwardVector = CameraRotation.Vector();
-	FVector TraceEnd = CameraLocation + (ForwardVector * ActorDistance); // Adjust distance as needed
-
-	// Perform the line trace
-	FHitResult HitResult;
-	FCollisionQueryParams TraceParams(FName(TEXT("")), true, this);
-	TraceParams.bTraceComplex = false;
-	TraceParams.bReturnPhysicalMaterial = false;
-
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		CameraLocation,
-		TraceEnd,
-		ECC_Visibility,
-		TraceParams
+	PhysicsHandle->GrabComponentAtLocation(
+		HitComponent,
+		NAME_None,
+		HitComponent->GetComponentLocation()
 	);
-
-	// If the trace is successful, grab the hit component using a physics handle
-	if (bHit && HitResult.GetComponent())
-	{
-		UPrimitiveComponent* HitComponent = HitResult.GetComponent();
-		PhysicsHandle->GrabComponentAtLocation(
-			HitComponent,
-			NAME_None,
-			HitResult.Location
-		);
-	}
 }
 
 
@@ -159,11 +134,9 @@ void AMyCharacter::Drop()
 {
 	if (PhysicsHandle)
 	{
-		// Release the actor from the physics handle
 		PhysicsHandle->ReleaseComponent();
 	}
 }
-
 
 void AMyCharacter::StartCrouch()
 {
