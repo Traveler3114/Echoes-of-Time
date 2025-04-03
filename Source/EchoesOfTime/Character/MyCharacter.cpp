@@ -99,47 +99,25 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (PhysicsHandle->GrabbedComponent) {
-		ServerUpdatePickedActorLocation();
-	}
-	//if (PhysicsHandle->GrabbedComponent) {
-	//	if (HasAuthority()) {
-	//		FVector CameraLocation = CameraComponent->GetComponentLocation();
-	//		FRotator CameraRotation = CameraComponent->GetComponentRotation();
+		if (HasAuthority()) {
+			FVector CameraLocation = CameraComponent->GetComponentLocation();
+			FRotator CameraRotation = CameraComponent->GetComponentRotation();
 
-	//		// Get the forward vector
-	//		FVector ForwardVector = CameraRotation.Vector();
+			// Get the forward vector
+			FVector ForwardVector = CameraRotation.Vector();
 
-	//		// Calculate the target location
-	//		FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
+			// Calculate the target location
+			FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
 
-	//		// Update the Physics Handle's target location
-	//		if (PhysicsHandle)
-	//		{
-	//			PhysicsHandle->SetTargetLocation(TargetLocation);
-	//		}
-	//	}
-	//	else ServerUpdatePickedActorLocation();
-	//}
-}
-
-void AMyCharacter::ServerUpdatePickedActorLocation_Implementation() {
-	//if (PhysicsHandle->GrabbedComponent) {
-		FVector CameraLocation = CameraComponent->GetComponentLocation();
-		FRotator CameraRotation = CameraComponent->GetComponentRotation();
-
-		// Get the forward vector
-		FVector ForwardVector = CameraRotation.Vector();
-
-		// Calculate the target location
-		FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
-
-		// Update the Physics Handle's target location
-		if (PhysicsHandle)
-		{
-			PhysicsHandle->SetTargetLocation(TargetLocation);
+			// Update the Physics Handle's target location
+			if (PhysicsHandle)
+			{
+				PhysicsHandle->SetTargetLocation(TargetLocation);
+			}
 		}
-	//}
+	}
 }
+
 
 void AMyCharacter::Pickup()
 {

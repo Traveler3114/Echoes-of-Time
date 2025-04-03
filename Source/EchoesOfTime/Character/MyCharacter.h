@@ -83,8 +83,6 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerDrop();
 
-	UFUNCTION(Server, Reliable)
-	void ServerUpdatePickedActorLocation();
 
 	// Map switching state
 	bool bCanSwitchMap = true;
