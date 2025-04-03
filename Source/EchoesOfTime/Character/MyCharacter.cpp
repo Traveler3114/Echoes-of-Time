@@ -118,13 +118,15 @@ void AMyCharacter::Tick(float DeltaTime)
 
 void AMyCharacter::Pickup()
 {
-	UPrimitiveComponent* HitComponent = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
+	if (HitActor) {
+		UPrimitiveComponent* HitComponent = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
 
-	PhysicsHandle->GrabComponentAtLocation(
-		HitComponent,
-		NAME_None,
-		HitComponent->GetComponentLocation()
-	);
+		PhysicsHandle->GrabComponentAtLocation(
+			HitComponent,
+			NAME_None,
+			HitComponent->GetComponentLocation()
+		);
+	}
 }
 
 
