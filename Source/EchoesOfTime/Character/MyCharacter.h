@@ -71,11 +71,20 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UTimeManager* TimeManager;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY(Replicated, EditAnywhere,BlueprintReadWrite)
 	AActor* HitActor;
 
 	void Pickup();
 	void Drop();
+
+	UFUNCTION(Server, Reliable)
+	void ServerPickup();
+
+	UFUNCTION(Server, Reliable)
+	void ServerDrop();
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpdatePickedActorLocation();
 
 	// Map switching state
 	bool bCanSwitchMap = true;

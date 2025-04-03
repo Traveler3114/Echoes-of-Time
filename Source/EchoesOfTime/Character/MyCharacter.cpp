@@ -89,8 +89,8 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AMyCharacter::StopCrouching);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMyCharacter::ServerStartSprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMyCharacter::ServerStopSprint);
-		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &AMyCharacter::Pickup);
-		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Completed, this, &AMyCharacter::Drop);
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &AMyCharacter::ServerPickup);
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Completed, this, &AMyCharacter::ServerDrop);
 	}
 }
 
@@ -99,6 +99,31 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (PhysicsHandle->GrabbedComponent) {
+		ServerUpdatePickedActorLocation();
+	}
+	//if (PhysicsHandle->GrabbedComponent) {
+	//	if (HasAuthority()) {
+	//		FVector CameraLocation = CameraComponent->GetComponentLocation();
+	//		FRotator CameraRotation = CameraComponent->GetComponentRotation();
+
+	//		// Get the forward vector
+	//		FVector ForwardVector = CameraRotation.Vector();
+
+	//		// Calculate the target location
+	//		FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
+
+	//		// Update the Physics Handle's target location
+	//		if (PhysicsHandle)
+	//		{
+	//			PhysicsHandle->SetTargetLocation(TargetLocation);
+	//		}
+	//	}
+	//	else ServerUpdatePickedActorLocation();
+	//}
+}
+
+void AMyCharacter::ServerUpdatePickedActorLocation_Implementation() {
+	//if (PhysicsHandle->GrabbedComponent) {
 		FVector CameraLocation = CameraComponent->GetComponentLocation();
 		FRotator CameraRotation = CameraComponent->GetComponentRotation();
 
@@ -113,12 +138,13 @@ void AMyCharacter::Tick(float DeltaTime)
 		{
 			PhysicsHandle->SetTargetLocation(TargetLocation);
 		}
-	}
+	//}
 }
 
 void AMyCharacter::Pickup()
 {
 	if (HitActor) {
+		UE_LOG(LogTemp, Warning, TEXT("Picked up"));
 		UPrimitiveComponent* HitComponent = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
 
 		PhysicsHandle->GrabComponentAtLocation(
@@ -129,15 +155,23 @@ void AMyCharacter::Pickup()
 	}
 }
 
-
-
+void AMyCharacter::ServerPickup_Implementation() 
+{
+	Pickup();
+}
 
 void AMyCharacter::Drop()
 {
 	if (PhysicsHandle)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Dropped"));
 		PhysicsHandle->ReleaseComponent();
 	}
+}
+
+void AMyCharacter::ServerDrop_Implementation()
+{
+	Drop();
 }
 
 void AMyCharacter::StartCrouch()
@@ -258,4 +292,5 @@ void AMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMyCharacter, bIsSprinting);
+	DOREPLIFETIME(AMyCharacter, HitActor);
 }
