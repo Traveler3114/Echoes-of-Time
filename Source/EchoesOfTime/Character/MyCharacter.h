@@ -105,8 +105,17 @@ protected:
 	UFUNCTION()
 	void OnRep_SprintState();
 
+	UFUNCTION(Server,Reliable)
+	void ServerCameraRotationUpdate(float NewPitch);
 
+	UPROPERTY(ReplicatedUsing = OnRep_Pitch)
+	float Pitch=0.0f;
 
+	UFUNCTION()
+	void OnRep_Pitch();
+
+	UFUNCTION(Server,Reliable)
+	void ServerUpdatePickedActor();
 
 public:
 	virtual void Tick(float DeltaTime) override;

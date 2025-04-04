@@ -27,9 +27,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* ObjectMesh;
 
-	UPROPERTY(VisibleAnyWhere)
-	class UBoxComponent* BoxCollision;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* Widget;
 

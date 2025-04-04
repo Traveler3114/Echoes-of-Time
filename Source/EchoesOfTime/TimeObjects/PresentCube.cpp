@@ -16,11 +16,7 @@ APresentCube::APresentCube()
     // Enable physics for the mesh
     ObjectMesh->SetSimulatePhysics(true);
 
-    // Initialize BoxCollision
-    BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-    BoxCollision->SetupAttachment(RootComponent);
-    BoxCollision->SetBoxExtent(FVector(200.0f, 200.0f, 32.0f));
-    
+
 
     // Initialize Widget
     Widget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget"));

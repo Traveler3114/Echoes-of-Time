@@ -99,22 +99,38 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (PhysicsHandle->GrabbedComponent) {
-		if (HasAuthority()) {
-			FVector CameraLocation = CameraComponent->GetComponentLocation();
-			FRotator CameraRotation = CameraComponent->GetComponentRotation();
+		ServerUpdatePickedActor();
+		//FVector CameraLocation = CameraComponent->GetComponentLocation();
+		//FRotator CameraRotation = CameraComponent->GetComponentRotation();
 
-			// Get the forward vector
-			FVector ForwardVector = CameraRotation.Vector();
+		//// Get the forward vector
+		//FVector ForwardVector = CameraRotation.Vector();
 
-			// Calculate the target location
-			FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
+		//// Calculate the target location
+		//FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
 
-			// Update the Physics Handle's target location
-			if (PhysicsHandle)
-			{
-				PhysicsHandle->SetTargetLocation(TargetLocation);
-			}
-		}
+		//// Update the Physics Handle's target location
+		//if (PhysicsHandle)
+		//{
+		//	PhysicsHandle->SetTargetLocation(TargetLocation);
+		//}
+	}
+}
+
+void AMyCharacter::ServerUpdatePickedActor_Implementation() {
+	FVector CameraLocation = CameraComponent->GetComponentLocation();
+	FRotator CameraRotation = CameraComponent->GetComponentRotation();
+
+	// Get the forward vector
+	FVector ForwardVector = CameraRotation.Vector();
+
+	// Calculate the target location
+	FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
+
+	// Update the Physics Handle's target location
+	if (PhysicsHandle)
+	{
+		PhysicsHandle->SetTargetLocation(TargetLocation);
 	}
 }
 
@@ -122,7 +138,6 @@ void AMyCharacter::Tick(float DeltaTime)
 void AMyCharacter::Pickup()
 {
 	if (HitActor) {
-		UE_LOG(LogTemp, Warning, TEXT("Picked up"));
 		UPrimitiveComponent* HitComponent = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
 
 		PhysicsHandle->GrabComponentAtLocation(
@@ -142,7 +157,6 @@ void AMyCharacter::Drop()
 {
 	if (PhysicsHandle)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Dropped"));
 		PhysicsHandle->ReleaseComponent();
 	}
 }
@@ -193,8 +207,24 @@ void AMyCharacter::Look(const FInputActionValue& Value)
 	{
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+		if (CameraComponent) {
+			ServerCameraRotationUpdate(CameraComponent->GetComponentRotation().Pitch);
+		}
 	}
 }
+
+void AMyCharacter::ServerCameraRotationUpdate_Implementation(float NewPitch) {
+	Pitch = NewPitch;
+	OnRep_Pitch();
+}
+
+void AMyCharacter::OnRep_Pitch() {
+	if (CameraComponent) {
+		FRotator NewRotation = FRotator(Pitch, CameraComponent->GetComponentRotation().Yaw, CameraComponent->GetComponentRotation().Roll);
+		CameraComponent->SetWorldRotation(NewRotation);
+	}
+}
+
 
 void AMyCharacter::ServerMapSwitch_Implementation()
 {
@@ -271,4 +301,5 @@ void AMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 	DOREPLIFETIME(AMyCharacter, bIsSprinting);
 	DOREPLIFETIME(AMyCharacter, HitActor);
+	DOREPLIFETIME(AMyCharacter, Pitch);
 }
