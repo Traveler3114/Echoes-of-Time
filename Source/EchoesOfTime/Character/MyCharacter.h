@@ -114,9 +114,6 @@ protected:
 	UFUNCTION()
 	void OnRep_Pitch();
 
-	UFUNCTION(Server,Reliable)
-	void ServerUpdatePickedActor();
-
 public:
 	virtual void Tick(float DeltaTime) override;
 

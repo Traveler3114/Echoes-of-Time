@@ -98,39 +98,27 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (PhysicsHandle->GrabbedComponent) {
-		ServerUpdatePickedActor();
-		//FVector CameraLocation = CameraComponent->GetComponentLocation();
-		//FRotator CameraRotation = CameraComponent->GetComponentRotation();
 
-		//// Get the forward vector
-		//FVector ForwardVector = CameraRotation.Vector();
-
-		//// Calculate the target location
-		//FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
-
-		//// Update the Physics Handle's target location
-		//if (PhysicsHandle)
-		//{
-		//	PhysicsHandle->SetTargetLocation(TargetLocation);
-		//}
-	}
-}
-
-void AMyCharacter::ServerUpdatePickedActor_Implementation() {
-	FVector CameraLocation = CameraComponent->GetComponentLocation();
-	FRotator CameraRotation = CameraComponent->GetComponentRotation();
-
-	// Get the forward vector
-	FVector ForwardVector = CameraRotation.Vector();
-
-	// Calculate the target location
-	FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
-
-	// Update the Physics Handle's target location
-	if (PhysicsHandle)
+	if (PhysicsHandle->GrabbedComponent)
 	{
-		PhysicsHandle->SetTargetLocation(TargetLocation);
+		FVector CameraLocation = CameraComponent->GetComponentLocation();
+		FRotator CameraRotation = CameraComponent->GetComponentRotation();
+
+		// Get the forward vector
+		FVector ForwardVector = CameraRotation.Vector();
+
+		// Calculate the target location
+		FVector TargetLocation = CameraLocation + (ForwardVector * 150.f); // Adjust distance (500.0f)
+
+		// Interpolate the position for smoother movement
+		FVector CurrentLocation = PhysicsHandle->GrabbedComponent->GetComponentLocation();
+		FVector NewLocation = FMath::VInterpTo(CurrentLocation, TargetLocation, DeltaTime, 10.0f); // Adjust interpolation speed
+
+		// Update the Physics Handle's target location
+		if (PhysicsHandle)
+		{
+			PhysicsHandle->SetTargetLocation(NewLocation);
+		}
 	}
 }
 
